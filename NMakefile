@@ -17,6 +17,9 @@
 TARGETOS=WINNT
 !include <win32.mak>
 
+INSTALL=c:\local
+INSTALLDIRS=$(INSTALL) $(INSTALL)\include $(INSTALL)\include\sasl $(INSTALL)\lib $(INSTALL)\bin
+
 libsasl.dll: client.obj
 	$(link) $(dlllflags) -out:libsasl.dll -version:1.0 client.obj
 
@@ -25,6 +28,15 @@ client.obj: include/sasl/sasl.h \
             include/sasl/visibility.h \
             src/client.c
 	$(cc) $(cdebug) $(cflags) $(cvarsdll) -Iinclude -DLIBISASL_INTERNAL src/client.c
+
+install: $(INSTALLDIRS) libsasl.dll
+	copy include\sasl\** $(INSTALL)\include\sasl
+	copy libsasl.dll $(INSTALL)\lib
+	copy libsasl.dll $(INSTALL)\bin
+	copy libsasl.exp $(INSTALL)\lib
+	copy libsasl.lib $(INSTALL)\lib
+
+$(INSTALL) $(INSTALL)\include $(INSTALL)\include\sasl $(INSTALL)\lib $(INSTALL)\bin:; -@mkdir $@
 
 clean:
 	-del libsasl.* *.obj vc100.pdb
