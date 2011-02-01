@@ -27,4 +27,4 @@ client.obj: include/sasl/sasl.h \
 	$(cc) $(cdebug) $(cflags) $(cvarsdll) -Iinclude -DLIBISASL_INTERNAL src/client.c
 
 clean:
-	del libsasl.dll client.obj
+	-del libsasl.* *.obj vc100.pdb
