@@ -3,6 +3,7 @@
 *.dirstamp
 *.exe
 *.l[ao]
+*.obj
 *~
 .deps/
 .libs/
@@ -25,6 +26,9 @@
 /config/plugin.ac
 /configure
 /libsasl.la
+/libsasl.dll
+/libsasl.exp
+/libsasl.lib
 /libtool
 /m4/libtool.m4
 /m4/ltoptions.m4
@@ -35,3 +39,5 @@
 /src/config.h
 /src/config.h.in
 /stamp-h1
+/vc100.pdb
+
