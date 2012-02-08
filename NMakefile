@@ -1,5 +1,5 @@
 # libsasl
-# Copyright (C) 2010 Membase, Inc
+# Copyright (C) 2010 - 1012 Couchbase, Inc
 # All rights reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,29 +14,72 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-TARGETOS=WINNT
-!include <win32.mak>
+CC_NODEBUG = cl.exe /O2 /DNDEBUG /MD /LD
+CC_DEBUG = cl.exe /Od /D_DEBUG /RTC1 /Z7 /LDd /W3 /MDd
+CFLAGS = /Iinclude /nologo /W3 /EHsc /DWIN32 /FD /c -DLIBISASL_INTERNAL
+LDFLAGS = /nologo /dll /incremental:no /opt:ref,icf /version:1.0
+LD = link.exe
+RM = del
 
-INSTALL=c:\local
+!include "Makefile.am"
+# "del" fails if the filename contains '/' as the directory separator.
+# The easiest way to fix this is to just replace it with '\'
+libsasl_SOURCES=$(libsasl_la_SOURCES:/=\)
+
+# Unfortunately nmake is a bit limited in its substitute functions.
+# Work around that by using dobj to represent debug object files ;)
+libsasl_la_OBJECTS=$(libsasl_SOURCES:.c=.obj)
+libsasl_la_debug_OBJECTS=$(libsasl_SOURCES:.c=.dobj)
+
+all: libsasl_debug.dll libsasl.dll
+
+libsasl.dll: $(libsasl_la_OBJECTS)
+	$(LD) $(LDFLAGS) /out:libsasl.dll $(libsasl_la_OBJECTS)
+
+libsasl_debug.dll: $(libsasl_la_debug_OBJECTS)
+	$(LD) $(LDFLAGS) /out:libsasl_debug.dll $(libsasl_la_debug_OBJECTS)
+
+.SUFFIXES: .c .obj .dobj .res
+
+.c.dobj:
+	$(CC_DEBUG) $(CFLAGS) /Fo"$@"  $<
+
+.c.obj:
+	$(CC_NODEBUG) $(CFLAGS) /Fo"$@"  $<
+
+clean:
+	-del $(libsasl_la_debug_OBJECTS) \
+	     $(libsasl_la_OBJECTS) \
+		 libsasl.dll libsasl.exp libsasl.lib \
+		 libsasl_debug.dll libsasl_debug.exp libsasl_debug.lib \
+		 vc100.idb vc100.pdb
+
+INSTALL=..\deps
 INSTALLDIRS=$(INSTALL) $(INSTALL)\include $(INSTALL)\include\sasl $(INSTALL)\lib $(INSTALL)\bin
 
-libsasl.dll: client.obj
-	$(link) $(dlllflags) -out:libsasl.dll -version:1.0 client.obj
-
-client.obj: include/sasl/sasl.h \
-            include/sasl/isasl.h \
-            include/sasl/visibility.h \
-            src/client.c
-	$(cc) $(cdebug) $(cflags) $(cvarsdll) -Iinclude -DLIBISASL_INTERNAL src/client.c
-
-install: $(INSTALLDIRS) libsasl.dll
+install: $(INSTALLDIRS) libsasl.dll libsasl_debug.dll
 	copy include\sasl\** $(INSTALL)\include\sasl
 	copy libsasl.dll $(INSTALL)\lib
 	copy libsasl.dll $(INSTALL)\bin
 	copy libsasl.exp $(INSTALL)\lib
 	copy libsasl.lib $(INSTALL)\lib
+	copy libsasl_debug.dll $(INSTALL)\lib
+	copy libsasl_debug.dll $(INSTALL)\bin
+	copy libsasl_debug.exp $(INSTALL)\lib
+	copy libsasl_debug.lib $(INSTALL)\lib
+
+uninstall:
+	-del $(INSTALL)\lib\libsasl_debug.dll \
+         $(INSTALL)\bin\libsasl_debug.dll \
+         $(INSTALL)\lib\libsasl_debug.exp \
+         $(INSTALL)\lib\libsasl_debug.lib \
+         $(INSTALL)\lib\libsasl.dll \
+         $(INSTALL)\bin\libsasl.dll \
+         $(INSTALL)\lib\libsasl.exp \
+         $(INSTALL)\lib\libsasl.lib \
+         $(INSTALL)\include\sasl\isasl.h \
+         $(INSTALL)\include\sasl\sasl.h \
+         $(INSTALL)\include\sasl\visibility.h
+	-rmdir $(INSTALL)\lib $(INSTALL)\bin $(INSTALL)\include\sasl $(INSTALL)\include $(INSTALL)
 
 $(INSTALL) $(INSTALL)\include $(INSTALL)\include\sasl $(INSTALL)\lib $(INSTALL)\bin:; -@mkdir $@
-
-clean:
-	-del libsasl.* *.obj vc100.pdb

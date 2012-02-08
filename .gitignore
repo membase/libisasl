@@ -29,6 +29,9 @@
 /libsasl.dll
 /libsasl.exp
 /libsasl.lib
+/libsasl_debug.dll
+/libsasl_debug.exp
+/libsasl_debug.lib
 /libtool
 /m4/libtool.m4
 /m4/ltoptions.m4
