@@ -22,4 +22,6 @@ pkginclude_HEADERS = \
                      include/sasl/isasl.h \
                      include/sasl/visibility.h
 
-libsasl_la_SOURCES = src/client.c
+libsasl_la_SOURCES=src/client.c
+libsasl_la_LDFLAGS=-version-info $(LIBISASL_API_CURRENT):$(LIBISASL_API_REVISION):$(LIBISASL_API_AGE) -no-undefined
+
