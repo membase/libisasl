@@ -25,9 +25,10 @@
 /config/pandora_vc_revinfo
 /config/plugin.ac
 /configure
-/libsasl.la
+/libisasl*.tar.gz
 /libsasl.dll
 /libsasl.exp
+/libsasl.la
 /libsasl.lib
 /libsasl_debug.dll
 /libsasl_debug.exp
@@ -43,4 +44,3 @@
 /src/config.h.in
 /stamp-h1
 /vc100.pdb
-
