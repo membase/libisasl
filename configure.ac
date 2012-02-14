@@ -15,7 +15,7 @@
 #   limitations under the License.
 AC_PREREQ(2.60)
 m4_include([m4/version.m4])
-AC_INIT(sasl, VERSION_NUMBER, support@couchbase.com)
+AC_INIT(libisasl, VERSION_NUMBER, support@couchbase.com)
 AC_CONFIG_SRCDIR([src/client.c])
 AC_CONFIG_AUX_DIR(config)
 AC_USE_SYSTEM_EXTENSIONS
