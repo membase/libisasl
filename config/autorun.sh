@@ -40,7 +40,10 @@ fi
 
 if [ -d .git ]
 then
-  perl config/version.pl || die "Failed to run config/version.pl"
+   cat > m4/version.m4 <<EOF
+m4_define([VERSION_NUMBER], [`git describe | tr '-' '_'`])
+m4_define([GIT_CHANGESET],[`git rev-parse HEAD`])
+EOF
 fi
 
 # Try to detect the supported binaries if the user didn't
