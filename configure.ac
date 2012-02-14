@@ -15,31 +15,40 @@
 #   limitations under the License.
 AC_PREREQ(2.60)
 m4_include([m4/version.m4])
-AC_INIT(sasl, VERSION_NUMBER, trond.norbye@membase.com)
+AC_INIT(sasl, VERSION_NUMBER, support@couchbase.com)
 AC_CONFIG_SRCDIR([src/client.c])
 AC_CONFIG_AUX_DIR(config)
-
-PANDORA_CANONICAL_TARGET
+AC_USE_SYSTEM_EXTENSIONS
+AM_INIT_AUTOMAKE(subdir-objects)
+AC_PROG_CC
+AM_PROG_CC_C_O
+AC_PROG_LN_S
+AC_DISABLE_STATIC
+AC_PROG_LIBTOOL
+AM_CONFIG_HEADER([src/config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 # the malloc tests seems to be broken for cross compilation.. ignore them
 ac_cv_func_malloc_0_nonnull=yes
 ac_cv_func_realloc_0_nonnull=yes
 
+COUCHBASE_GENERIC_COMPILER(c99)
 AM_CPPFLAGS="$AM_CPPFLAGS -I\${top_srcdir}/include -DLIBISASL_INTERNAL"
+
+#
+# To ensure that we don't break applications in mysterious ways we need
+# to version our library. For a detailed description, check out:
+# http://www.gnu.org/software/libtool/manual/libtool.html#Libtool-versioning
+#
+LIBISASL_API_CURRENT=1
+LIBISASL_API_REVISION=0
+LIBISASL_API_AGE=0
+AC_SUBST(LIBISASL_API_CURRENT)
+AC_SUBST(LIBISASL_API_REVISION)
+AC_SUBST(LIBISASL_API_AGE)
+
 
 dnl ----------------------------------------------------------------------------
 
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT
-echo "---"
-echo "Configuration summary for $PACKAGE_NAME version $VERSION"
-echo ""
-echo "   * Installation prefix:       $prefix"
-echo "   * System type:               $host_vendor-$host_os"
-echo "   * Host CPU:                  $host_cpu"
-echo "   * C Compiler:                $CC_VERSION"
-echo "   * Assertions enabled:        $ac_cv_assert"
-echo "   * Debug enabled:             $with_debug"
-echo "   * Warnings as failure:       $ac_cv_warnings_as_errors"
-echo ""
-echo "---"
