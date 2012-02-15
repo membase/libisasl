@@ -17,7 +17,9 @@ ACLOCAL_AMFLAGS = -I m4 --force
 
 lib_LTLIBRARIES = libsasl.la
 
-pkginclude_HEADERS = \
+saslincludedir = $(includedir)/sasl
+
+saslinclude_HEADERS = \
                      include/sasl/sasl.h \
                      include/sasl/isasl.h \
                      include/sasl/visibility.h
